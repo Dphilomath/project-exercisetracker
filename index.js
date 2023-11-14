@@ -4,7 +4,6 @@ const cors = require('cors')
 const bodyparser = require("body-parser")
 require('./dbConnect')()
 require('dotenv').config()
-console.log(process.env);
 
 app.use(cors())
 app.use(bodyparser.json())
