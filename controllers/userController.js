@@ -71,11 +71,19 @@ router.get("/users", async (req, res) => {
 
 router.get("/users/:_id/logs", async (req, res) => {
     try {
+        let { from , to , limit } = req.query
+        if(!from) from = new Date(1900)
+        else from = new date(from)
+        if(!to) to = new Date()
+        else to = new Date(to)
+
         let id = req.params._id
         let user = await User.findById(id)
 
         if (user) {
-            let log = await Exercise.find({ username: user.username })
+            let log = limit ? await Exercise.find({username: user.username, date: {$gt: from, $lt: to }}).limit(limit) : await Exercise.find({username: user.username, date: {$gt: from, $lt: to }})
+            
+            // log = await Exercise.find({ username: user.username })
             log = log.map(l => {
                 return {
                     description: l.description,
