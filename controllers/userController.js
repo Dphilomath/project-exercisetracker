@@ -15,7 +15,6 @@ router.post("/users", async (req, res) => {
 
         user.save()
             .then(saved => {
-                console.log("saved: ", saved);
                 return res.json(saved)
             })
             .catch(err => {
@@ -42,7 +41,15 @@ router.post("/users/:_id/exercises", async (req, res) => {
                 date: req.body.date ? new Date(req.body.date).toDateString() : new Date().toDateString()
             })
             exc.save()
-                .then(saved => { return res.json(saved) })
+                .then(saved => {
+                    return res.json({
+                        username: saved.username,
+                        description: saved.description,
+                        duration: saved.duration,
+                        date: saved.date,
+                        _id: user._id
+                    })
+                })
                 .catch(err => {
                     console.log(err)
                     return res.status(400).json(err)
@@ -69,8 +76,8 @@ router.get("/users/:_id/logs", async (req, res) => {
 
         if (user) {
             let log = await Exercise.find({ username: user.username })
-            log = log.map(l => { 
-                return{
+            log = log.map(l => {
+                return {
                     description: l.description,
                     duration: l.duration,
                     date: l.date
