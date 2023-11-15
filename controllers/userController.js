@@ -73,7 +73,7 @@ router.get("/users/:_id/logs", async (req, res) => {
     try {
         let { from , to , limit } = req.query
         if(!from) from = new Date(1900)
-        else from = new date(from)
+        else from = new Date(from)
         if(!to) to = new Date()
         else to = new Date(to)
 
