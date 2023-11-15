@@ -71,7 +71,7 @@ router.get("/users", async (req, res) => {
 
 router.get("/users/:_id/logs", async (req, res) => {
     try {
-        let { from , to , limit } = req.query
+        let { from , to , limit = 0 } = req.query
         if(!from) from = new Date(0)
         else from = new Date(from)
         if(!to) to = new Date()
@@ -84,7 +84,7 @@ router.get("/users/:_id/logs", async (req, res) => {
             let alllogs
             const count = ( alllogs = await Exercise.find({username: user.username})).length
             console.log(alllogs);
-            let log = limit ? await Exercise.find({username: user.username, date: {$gt: from, $lt: to }}).limit(limit) : await Exercise.find({username: user.username, date: {$gt: from, $lt: to }})
+            let log = limit>0 ? await Exercise.find({username: user.username, date: {$gt: from, $lt: to }}).limit(limit) : await Exercise.find({username: user.username, date: {$gt: from, $lt: to }})
             
             // log = await Exercise.find({ username: user.username })
             log = log.map(l => {
