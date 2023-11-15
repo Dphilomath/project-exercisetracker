@@ -81,6 +81,7 @@ router.get("/users/:_id/logs", async (req, res) => {
         let user = await User.findById(id)
 
         if (user) {
+            const count = (await Exercise.find({username: user.username})).length
             let log = limit ? await Exercise.find({username: user.username, date: {$gt: from, $lt: to }}).limit(limit) : await Exercise.find({username: user.username, date: {$gt: from, $lt: to }})
             
             // log = await Exercise.find({ username: user.username })
@@ -93,7 +94,7 @@ router.get("/users/:_id/logs", async (req, res) => {
             })
             res.json({
                 username: user.username,
-                count: log.length,
+                count,
                 _id: user._id,
                 log: log
             })
