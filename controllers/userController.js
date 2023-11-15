@@ -81,7 +81,9 @@ router.get("/users/:_id/logs", async (req, res) => {
         let user = await User.findById(id)
 
         if (user) {
-            const count = (await Exercise.find({username: user.username})).length
+            let alllogs
+            const count = ( alllogs = await Exercise.find({username: user.username})).length
+            console.log(alllogs);
             let log = limit ? await Exercise.find({username: user.username, date: {$gt: from, $lt: to }}).limit(limit) : await Exercise.find({username: user.username, date: {$gt: from, $lt: to }})
             
             // log = await Exercise.find({ username: user.username })
