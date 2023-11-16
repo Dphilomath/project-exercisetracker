@@ -38,7 +38,7 @@ router.post("/users/:_id/exercises", async (req, res) => {
                 username: user.username,
                 description: req.body.description,
                 duration: req.body.duration,
-                date: req.body.date ? new Date(req.body.date).toDateString() : new Date().toDateString()
+                date: req.body.date ? new Date(req.body.date) : new Date()
             })
             exc.save()
                 .then(saved => {
@@ -46,7 +46,7 @@ router.post("/users/:_id/exercises", async (req, res) => {
                         username: saved.username,
                         description: saved.description,
                         duration: saved.duration,
-                        date: saved.date,
+                        date: saved.date.toDateString(),
                         _id: user._id
                     })
                 })
@@ -86,12 +86,11 @@ router.get("/users/:_id/logs", async (req, res) => {
             console.log(alllogs);
             let log = limit>0 ? await Exercise.find({username: user.username, date: {$gt: from, $lt: to }}).limit(limit) : await Exercise.find({username: user.username, date: {$gt: from, $lt: to }})
             
-            // log = await Exercise.find({ username: user.username })
             log = log.map(l => {
                 return {
                     description: l.description,
                     duration: l.duration,
-                    date: l.date
+                    date: l.date.toDateString()
                 }
             })
             res.json({
