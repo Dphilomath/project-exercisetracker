@@ -91,7 +91,7 @@ router.get("/users/:_id/logs", async (req, res) => {
                 return {duration: l.duration, description: l.description, date: l.date.toDateString()}
             })
             res.json({
-                id:x._id, username: x.username, log: logs
+                id:x._id, username: x.username, log: logs, count: logs.length
             })
         }
     } catch (error) {
