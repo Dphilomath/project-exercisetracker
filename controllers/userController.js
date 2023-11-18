@@ -40,8 +40,11 @@ router.post("/users/:_id/exercises", async (req, res) => {
                 duration: req.body.duration,
                 date: req.body.date ? new Date(req.body.date) : new Date()
             })
+
+            user.log.push(exc._id)
             exc.save()
-                .then(saved => {
+                .then(async (saved) => {
+                    await user.save()
                     return res.json({
                         username: saved.username,
                         description: saved.description,
@@ -81,23 +84,14 @@ router.get("/users/:_id/logs", async (req, res) => {
         let user = await User.findById(id)
 
         if (user) {
-            let alllogs
-            const count = ( alllogs = await Exercise.find({username: user.username})).length
-            console.log(alllogs);
-            let log = limit>0 ? await Exercise.find({username: user.username, date: {$gt: from, $lt: to }}).limit(limit) : await Exercise.find({username: user.username, date: {$gt: from, $lt: to }})
-            
-            log = log.map(l => {
-                return {
-                    description: l.description,
-                    duration: l.duration,
-                    date: l.date.toDateString()
-                }
+            let x = await user.populate({path: 'log', select: "-_id -__v"})
+            console.log(x);
+            let logs = x.log
+            logs = logs.map(l =>{
+                return {duration: l.duration, description: l.description, date: l.date.toDateString()}
             })
             res.json({
-                username: user.username,
-                count,
-                _id: user._id,
-                log: log
+                id:x._id, username: x.username, log: logs
             })
         }
     } catch (error) {

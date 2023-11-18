@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
-  username: String
+  username: String,
+  log: [{ type: Schema.Types.ObjectId, ref: 'Exercise' }]
 });
 
 userSchema.methods.toJSON = function() {
