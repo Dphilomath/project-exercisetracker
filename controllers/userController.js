@@ -85,13 +85,17 @@ router.get("/users/:_id/logs", async (req, res) => {
 
         if (user) {
             let x = await user.populate({path: 'log', select: "-_id -__v"})
-            console.log(x);
             let logs = x.log
+            let count = logs.length
+
+            logs = logs.filter(l=> l.date > from && l.date < to)
+            logs = logs.sort()
+            logs = limit>0? logs.slice(0, limit): logs
             logs = logs.map(l =>{
                 return {duration: l.duration, description: l.description, date: l.date.toDateString()}
             })
             res.json({
-                id:x._id, username: x.username, log: logs, count: logs.length
+                id:x._id, username: x.username, log: logs, count
             })
         }
     } catch (error) {
