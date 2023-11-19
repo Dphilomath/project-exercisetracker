@@ -5,9 +5,7 @@ const router = require("express").Router()
 router.post("/users", async (req, res) => {
     try {
         let exists = await User.exists({ username: req.body.username })
-        console.log(exists)
         if (exists) {
-            console.log("hi")
             let existing = await User.findOne({ username: req.body.username })
             return res.json(existing)
         }
@@ -84,18 +82,21 @@ router.get("/users/:_id/logs", async (req, res) => {
         let user = await User.findById(id)
 
         if (user) {
-            let x = await user.populate({path: 'log', select: "-_id -__v"})
-            let logs = x.log
-            let count = logs.length
+            let populatedUser = await user.populate({path: 'log', select: "-_id -__v"})
+            let logs = populatedUser.log, count = logs.length
 
-            logs = logs.filter(l=> l.date > from && l.date < to)
+            logs = logs.filter(l => {
+                return (l.date >= from && l.date <= to)
+            })
+
             logs = logs.sort()
-            logs = limit>0? logs.slice(0, limit): logs
+            logs = limit > 0 ? logs.slice(0, limit) : logs
+            
             logs = logs.map(l =>{
                 return {duration: l.duration, description: l.description, date: l.date.toDateString()}
             })
             res.json({
-                id:x._id, username: x.username, log: logs, count
+                id:populatedUser._id, username: populatedUser.username, log: logs, count
             })
         }
     } catch (error) {
